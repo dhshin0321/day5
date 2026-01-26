@@ -3,8 +3,8 @@ body {
     font-family: 'Malgun Gothic', sans-serif;
     background-color: #f0f2f5;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column; /* 추가: 자식 요소들을 세로로 정렬 */
+    align-items: center;    /* 가운데 정렬 유지 */
     padding-top: 50px;
     height: 100vh;
     margin: 0;
@@ -15,16 +15,18 @@ body {
     display: flex;
     gap: 40px;
     align-items: flex-start;
+    width: 790px; /* 메인 컨테이너(450px) + 기록실(300px) + 간격(40px) */
 }
 
 /* 2. 번호 생성기 컨테이너 (왼쪽) */
 .container {
     background-color: white;
-    padding: 30px;
+    padding: 30px;               /* 상자 테두리와 내용 사이의 안쪽 여백 */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 450px;
+    width: 450px;                /* 내용 영역 가로 너비 */
+    height: 282px;               /* 전체 높이(342px)를 맞추기 위해 패딩을 제외한 높이 설정 */
 }
 
 /* 제목(h1) 영역 설정 */
@@ -150,8 +152,9 @@ button:disabled {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 300px;
-    max-height: 80vh;
+    max-height: 342px; 
     overflow-y: auto;
+    box-sizing: border-box; /* 안쪽 여백과 테두리를 포함하여 높이를 계산함 */
 }
 
 #history-container h2 {
@@ -163,16 +166,16 @@ button:disabled {
 
 .history-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    padding: 10px;
+    padding: 10px 3px;
     border-bottom: 1px solid #eee;
     font-size: 16px;
 }
 
 .history-number-prefix {
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 15px;
     color: #555;
     flex-shrink: 0;
 }
@@ -193,4 +196,19 @@ button:disabled {
     color: white;
     font-size: 13px;
     font-weight: bold;
+}
+
+/* 6. 설명 컨테이너 (하단) */
+#explanation-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 790px;               /* 전체 너비를 790으로 설정 */
+    box-sizing: border-box;     /* 패딩(30px)을 790 안으로 포함시킴 */
+    
+    margin-top: 80px;
+    line-height: 1.6;
+    color: #555;
 }

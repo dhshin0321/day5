@@ -225,6 +225,10 @@ function addHistory(numbers) {
 
     historyItem.appendChild(numbersDiv);
     historyList.prepend(historyItem); // 최신 기록이 위로 오도록 prepend 사용
+
+    // 추가된 부분: 기록이 추가될 때마다 기록 상자의 스크롤을 맨 위로 이동 (최신 기록 확인용)
+    const container = document.getElementById('history-container');
+    container.scrollTop = 0;
 }
 
 // 로또 공식 번호 대역별 색상 적용
