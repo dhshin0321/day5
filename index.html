@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOTTO6/45 번호 생성기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <h1>
+                <span class="title-lotto">
+                    <span class="lotto-normal-size" style="color: #004EA2;">L</span><span class="lotto-normal-size" style="color: #00A0D2;">o</span><span class="lotto-normal-size" style="color: #004EA2;">tt</span><span class="lotto-normal-size" style="color: #8FC31F;">o</span><span class="lotto-small-size" style="color: #004EA2;">6</span><span class="lotto-small-size" style="color: #8FC31F;">/</span><span class="lotto-small-size" style="color: #004EA2;">45</span>
+                </span>
+                
+                <span class="title-round">
+                    <span id="currentRound"></span>회차 번호 생성기
+                </span>
+
+                <span class="title-date">
+                    (<span id="currentDate"></span> 추첨 예정)
+                </span>
+            </h1>
+
+            <div class="button-group">
+                <button id="generate">번호 생성</button>
+                <button id="immediate-generate" class="hidden">즉시 생성</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+
+        <div id="history-container">
+            <h2>번호 기록</h2>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <audio id="dingSound" src="ding.mp3" preload="auto"></audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>
