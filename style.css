@@ -386,3 +386,20 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         font-size: 11px;
     }
 }
+
+/* (추가) 번호 필터 설정 위 안내 문구 */
+.filter-note{
+  margin: 0 0 0;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #666;
+}
+
+/* 모바일에서 너무 크거나 답답해 보이면 살짝 조절 */
+@media (max-width: 480px){
+  .filter-note{
+    font-size: 14px;
+    margin: 0 0 0;
+  }
+}
