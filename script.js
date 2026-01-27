@@ -263,9 +263,15 @@ function searchAndDisplayLottoMarkers(centerLat, centerLng) {
 }
 
 // (추가) 카카오맵 새 탭 열기 (클릭 2 이후)
+// ★ 수정 포인트: map.kakao.com의 q=로또,lat,lng 형태는 "로또,lat,lng"를 통째로 검색어로 취급해서 결과없음이 뜸
+// → 공식 URL Scheme 형태(m.map.kakao.com/scheme/search?q=키워드&p=lat,lng)로 열어야 "좌표 기준 검색"이 됨
 function openKakaoMapSearchTab(lat, lng) {
-    const query = encodeURIComponent('로또');
-    const url = `https://map.kakao.com/link/search/${query},${lat},${lng}`;
+    const q = encodeURIComponent('로또');
+
+    // 카카오 공식 URL Scheme (모바일웹 스킴) 형태: search?q=...&p=위도,경도
+    // 웹(PC)에서도 새 탭으로 열면 대체로 정상 동작
+    const url = `https://m.map.kakao.com/scheme/search?q=${q}&p=${lat},${lng}`;
+
     window.open(url, '_blank', 'noopener,noreferrer');
 }
 
