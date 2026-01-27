@@ -258,16 +258,25 @@ function searchAndDisplayLottoMarkers(centerLat, centerLng) {
     );
 }
 
-// (추가) 카카오맵 새 탭 열기 (클릭 2 이후)
-// ★ 핵심 수정: scheme/search의 p 좌표 순서를 (lat,lng)로 넣어야 함
-// (lng,lat)로 넣으면 위도가 90도를 넘는 값이 들어가 urlX/urlY가 비정상으로 변하면서 "백지 지도"가 뜰 수 있음
+// (교체) 카카오맵 새 탭 열기 (클릭 2 이후)
 function openKakaoMapSearchTab(lat, lng) {
-    const q = encodeURIComponent('로또');
+    const qText = '로또';
+    const q = encodeURIComponent(qText);
 
-    // ✅ p는 (lat,lng) 순서로 전달
-    const url = `https://m.map.kakao.com/scheme/search?q=${q}&p=${lat},${lng}`;
+    // ✅ 1) 좌표 포함 검색 링크(PC에서 주변검색으로 더 잘 잡히는 편)
+    // 확실하지 않음: 카카오가 내부 동작을 바꿀 수는 있음.
+    const url1 = `https://map.kakao.com/link/search/${qText},${lat},${lng}`;
 
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // ✅ 2) 기존 모바일 scheme (좌표기준 검색)
+    const url2 = `https://m.map.kakao.com/scheme/search?q=${q}&p=${lat},${lng}`;
+
+    // 우선 url1 시도 → (막히면) url2 시도
+    // window.open 결과가 null이면(팝업차단 등) fallback도 의미 없어서 그대로 종료
+    const win = window.open(url1, '_blank', 'noopener,noreferrer');
+    if (!win) return;
+
+    // 일부 환경에서 url1이 좌표를 무시하고 일반검색처럼 뜨면,
+    // 사용자가 "현 지도 내 장소검색"을 켜야만 완전히 맞춰짐(이건 강제 불가).
 }
 
 // ✅ 초기 상태(페이지 최초 로드)

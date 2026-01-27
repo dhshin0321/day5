@@ -49,7 +49,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 
 /* 카카오톡 공유 버튼 스타일 */
 .share-section { margin-bottom: 30px; }
-.kakao-btn { background-color: #FEE500; color: #000000; width: 100%; max-width: 300px; font-size: 16px; display: inline-block; }
+.kakao-btn { background-color: #FEE500; color: #000000; width: 100%; max-width: 260px; font-size: 16px; display: inline-block; }
 .kakao-btn:hover { background-color: #E6CF00; }
 
 /* 4. 결과 공(Ball) 스타일 (위치 변경됨) */
