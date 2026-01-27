@@ -259,24 +259,17 @@ function searchAndDisplayLottoMarkers(centerLat, centerLng) {
 }
 
 // (교체) 카카오맵 새 탭 열기 (클릭 2 이후)
-function openKakaoMapSearchTab(lat, lng) {
-    const qText = '로또';
-    const q = encodeURIComponent(qText);
+// ✅ 좌표를 URL에 섞지 말고 "로또" 검색 페이지만 연다 (가장 안정적)
+// - PC에서 좌표 섞이면 "로또,위도,경도"를 검색어로 취급해 0건이 자주 뜸
+function openKakaoMapSearchTab() {
+    const q = encodeURIComponent('로또');
+    const url = `https://map.kakao.com/?q=${q}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
 
-    // ✅ 1) 좌표 포함 검색 링크(PC에서 주변검색으로 더 잘 잡히는 편)
-    // 확실하지 않음: 카카오가 내부 동작을 바꿀 수는 있음.
-    const url1 = `https://map.kakao.com/link/search/${qText},${lat},${lng}`;
-
-    // ✅ 2) 기존 모바일 scheme (좌표기준 검색)
-    const url2 = `https://m.map.kakao.com/scheme/search?q=${q}&p=${lat},${lng}`;
-
-    // 우선 url1 시도 → (막히면) url2 시도
-    // window.open 결과가 null이면(팝업차단 등) fallback도 의미 없어서 그대로 종료
-    const win = window.open(url1, '_blank', 'noopener,noreferrer');
-    if (!win) return;
-
-    // 일부 환경에서 url1이 좌표를 무시하고 일반검색처럼 뜨면,
-    // 사용자가 "현 지도 내 장소검색"을 켜야만 완전히 맞춰짐(이건 강제 불가).
+// (교체) 클릭 2 이후
+function handleMapReClickOpenTab() {
+    openKakaoMapSearchTab();
 }
 
 // ✅ 초기 상태(페이지 최초 로드)
