@@ -1,4 +1,4 @@
-// 1. 변수 및 상수 설정 (기본 세팅)
+ // 1. 변수 및 상수 설정 (기본 세팅)
 const generateBtn = document.getElementById('generate');
 const immediateBtn = document.getElementById('immediate-generate');
 const resultDiv = document.getElementById('result');
@@ -13,10 +13,21 @@ let historyCounter = 0;           // 기록실 번호 (1., 2. ...)
 let activeRollIntervals = [];     // 공이 굴러가는 애니메이션 저장소
 let isGenerating = false;         // 현재 번호 생성 중인지 확인하는 상태값
 
+// 필터링 기능용 변수
+const includeSet = new Set();     // 포함할 번호 (최대 5개)
+const excludeSet = new Set();     // 제외할 번호 (최대 38개)
+
 // 회차 및 날짜 계산을 위한 기준 (2026년 기준)
 const BASE_ROUND = 1210;
 const BASE_DATE_FOR_1210 = new Date('2026-01-31T20:00:00+09:00'); 
 const MS_IN_A_WEEK = 7 * 24 * 60 * 60 * 1000; // 1주일의 밀리초
+
+// 카카오 API 키 (사용자가 직접 발급받은 JS 키를 HTML에 넣어야 함)
+// 실제 서비스 시에는 initKakao() 등을 호출
+
+// ★ 기록 저장/복원용 상수
+const HISTORY_STORAGE_KEY = 'lotto_history_v1';
+const HISTORY_MAX = 30;
 
 // 2. 초기화 및 화면 업데이트 함수
 
@@ -30,21 +41,16 @@ function updateRoundNumber() {
     let roundNumber;
     let drawDate = new Date(BASE_DATE_FOR_1210);
 
-    // 날짜를 비교해서 회차와 예정일을 계산함
-    // 2026년 1월 31일 오후 8시 0분 0초가 되는 순간 else로 넘어감
     if (now.getTime() < BASE_DATE_FOR_1210.getTime()) {
         roundNumber = 1209;
-        // 1월 31일 20시 전까지는 1월 31일 추첨 예정으로 표시
         drawDate = new Date(BASE_DATE_FOR_1210);
     } else {
         const diffMs = now.getTime() - BASE_DATE_FOR_1210.getTime();
         const weeksPassed = Math.floor(diffMs / MS_IN_A_WEEK);
         roundNumber = BASE_ROUND + weeksPassed;
-        // 기준 시간(토요일 20시)이 지났으므로 다음 추첨일인 7일 뒤를 표시
         drawDate.setTime(BASE_DATE_FOR_1210.getTime() + ((weeksPassed + 1) * MS_IN_A_WEEK));
     }
 
-    // HTML에 계산된 회차와 날짜(YYYY-MM-DD)를 배달
     currentRoundElement.textContent = roundNumber;
     const year = drawDate.getFullYear();
     const month = String(drawDate.getMonth() + 1).padStart(2, '0');
@@ -62,13 +68,363 @@ function initPlaceholders() {
     }
 }
 
+// ★ 기능 1: 필터 버튼 생성 및 초기화
+function initFilterButtons() {
+    const includeContainer = document.getElementById('include-numbers-container');
+    const excludeContainer = document.getElementById('exclude-numbers-container');
+
+    // 1~45 버튼 생성
+    for (let i = 1; i <= 45; i++) {
+        // 포함 버튼 생성
+        const inBtn = document.createElement('button');
+        inBtn.textContent = i;
+        inBtn.classList.add('filter-btn');
+        inBtn.dataset.num = i;
+        inBtn.onclick = () => toggleInclude(i, inBtn);
+        includeContainer.appendChild(inBtn);
+
+        // 제외 버튼 생성
+        const exBtn = document.createElement('button');
+        exBtn.textContent = i;
+        exBtn.classList.add('filter-btn');
+        exBtn.dataset.num = i;
+        exBtn.onclick = () => toggleExclude(i, exBtn);
+        excludeContainer.appendChild(exBtn);
+        
+        // 9개 단위로 줄바꿈을 시각적으로 돕기 위해 (CSS flex-wrap이 처리하지만, DOM 순서 보장)
+    }
+}
+
+// 포함 번호 토글 (최대 5개, 초록색)
+function toggleInclude(num, btn) {
+    if (includeSet.has(num)) {
+        includeSet.delete(num);
+        btn.classList.remove('included');
+    } else {
+        if (includeSet.size >= 5) {
+            alert('포함할 번호는 최대 5개까지만 선택 가능합니다.');
+            return;
+        }
+        if (excludeSet.has(num)) {
+            alert('이미 제외된 번호입니다. 제외 목록에서 해제 후 선택해주세요.');
+            return;
+        }
+        includeSet.add(num);
+        btn.classList.add('included');
+    }
+    document.getElementById('include-count').textContent = `${includeSet.size}/5`;
+}
+
+// 제외 번호 토글 (최대 38개, 빨간색)
+function toggleExclude(num, btn) {
+    if (excludeSet.has(num)) {
+        excludeSet.delete(num);
+        btn.classList.remove('excluded');
+    } else {
+        // 남은 번호가 최소 6개는 되어야 함 (45 - 38 = 7, 최소 여유)
+        if (excludeSet.size >= 38) {
+            alert('제외할 번호는 최대 38개까지만 선택 가능합니다.');
+            return;
+        }
+        if (includeSet.has(num)) {
+            alert('이미 포함된 번호입니다. 포함 목록에서 해제 후 선택해주세요.');
+            return;
+        }
+        excludeSet.add(num);
+        btn.classList.add('excluded');
+    }
+    document.getElementById('exclude-count').textContent = `${excludeSet.size}/38`;
+}
+
+// ★ 기능 2: 카카오맵 연동
+function initMap() {
+    const mapContainer = document.getElementById('map'); 
+    
+    // 카카오맵 객체가 로드되지 않았으면(API키 없음 등) 중단하지 않고 안내 표시
+    if (typeof kakao === 'undefined' || !kakao.maps) {
+        mapContainer.innerHTML = '<p style="padding-top:100px; color:#888;">지도를 불러올 수 없습니다.<br>(API Key 확인 필요)</p>';
+        return;
+    }
+
+    // 기본 위치 (서울) - HTML5 Geolocation으로 사용자 위치 대체 가능
+    let lat = 37.566826;
+    let lng = 126.9786567;
+
+    const mapOption = { 
+        center: new kakao.maps.LatLng(lat, lng), 
+        level: 4 
+    };
+
+    const map = new kakao.maps.Map(mapContainer, mapOption); 
+
+    // 사용자 현재 위치 가져오기
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            lat = position.coords.latitude;
+            lng = position.coords.longitude;
+            const locPosition = new kakao.maps.LatLng(lat, lng);
+            map.setCenter(locPosition);
+            
+            // 내 위치 마커
+            const marker = new kakao.maps.Marker({  
+                map: map, 
+                position: locPosition
+            });
+
+            // 주변 '로또' 키워드 검색 (장소 검색 객체 생성)
+            const ps = new kakao.maps.services.Places(); 
+            ps.keywordSearch('로또', (data, status, pagination) => {
+                if (status === kakao.maps.services.Status.OK) {
+                    for (let i=0; i<data.length; i++) {
+                        displayMarker(data[i]);    
+                    }
+                }
+            }, {
+                location: locPosition,
+                radius: 2000 // 반경 2km
+            });
+
+            function displayMarker(place) {
+                const marker = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(place.y, place.x) 
+                });
+                // 마커 클릭 시 장소명 인포윈도우
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    const infowindow = new kakao.maps.InfoWindow({zIndex:1});
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+                    infowindow.open(map, marker);
+                });
+            }
+
+        });
+    }
+}
+
+// ★ 기능 3: 카카오톡 공유 초기화
+function initKakaoShare() {
+    try {
+        if (!Kakao.isInitialized()) {
+            Kakao.init('YOUR_KAKAO_JAVASCRIPT_KEY'); // HTML의 키와 동일한 키 사용
+        }
+    } catch (e) {
+        console.log('Kakao SDK init failed (Check API Key)');
+    }
+
+    document.getElementById('kakao-share-btn').addEventListener('click', () => {
+        if (currentNumbers.length !== 6) {
+            alert('먼저 번호를 생성해주세요!');
+            return;
+        }
+        
+        const numStr = sortedNumbersCache.join(', ');
+        
+        try {
+            Kakao.Share.sendDefault({
+                objectType: 'text',
+                text: `🍀 로또 행운 번호 도착!\n\n이번 주 추천 번호:\n[ ${numStr} ]\n\n1등 당첨을 기원합니다!`,
+                link: {
+                    mobileWebUrl: window.location.href,
+                    webUrl: window.location.href,
+                },
+                buttonTitle: '나도 번호 받으러 가기',
+            });
+        } catch (err) {
+            alert('카카오톡 공유 기능을 사용할 수 없습니다. (API 키 확인 필요)');
+        }
+    });
+}
+
+// ★ 기록 저장/복원 관련 함수
+function _safeParseJSON(str, fallback) {
+    try { return JSON.parse(str); } catch { return fallback; }
+}
+
+function loadHistoryFromStorage() {
+    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    const data = _safeParseJSON(raw, []);
+    if (!Array.isArray(data)) return [];
+    // 방어: 형태가 깨졌을 경우 최소한으로 정리
+    return data
+        .filter(item => item && Array.isArray(item.numbers) && item.numbers.length === 6)
+        .map(item => ({
+            id: typeof item.id === 'number' ? item.id : Date.now(),
+            numbers: item.numbers
+        }))
+        .slice(0, HISTORY_MAX);
+}
+
+function saveHistoryToStorage(historyArr) {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyArr));
+}
+
+function renderHistoryItem(item) {
+    const historyItem = document.createElement('div');
+    historyItem.classList.add('history-item');
+    historyItem.dataset.historyId = String(item.id);
+
+    const historyNumberPrefix = document.createElement('div');
+    historyNumberPrefix.classList.add('history-number-prefix');
+    historyNumberPrefix.textContent = `${item.id}.`; // 몇 번째 기록인지
+    historyItem.prepend(historyNumberPrefix);
+
+    const numbersDiv = document.createElement('div');
+    historyDiv = document.createElement('div'); // 수정: 변수명 오류 방지용 (혹시 모를 오류 대비)
+    numbersDiv.classList.add('history-numbers');
+
+    item.numbers.forEach(number => {
+        const ball = document.createElement('div');
+        ball.classList.add('history-ball');
+        ball.textContent = number;
+        ball.style.backgroundColor = getBallColor(number);
+        numbersDiv.appendChild(ball);
+    });
+
+    historyItem.appendChild(numbersDiv);
+
+    // ★ 액션 버튼 영역 (복사 / 삭제)
+    const actions = document.createElement('div');
+    actions.classList.add('history-actions');
+
+    const copyBtn = document.createElement('button');
+    copyBtn.classList.add('history-action-btn');
+    copyBtn.type = 'button';
+    copyBtn.textContent = '📋';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('history-action-btn');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '❌';
+
+    copyBtn.addEventListener('click', () => {
+        const text = item.numbers.join(', ');
+        copyToClipboard(text).then(() => {
+            showCopyToast(copyBtn, '복사됨');
+        }).catch(() => {
+            // 클립보드 실패 시에도 최소 피드백
+            showCopyToast(copyBtn, '복사 실패');
+        });
+    });
+
+    deleteBtn.addEventListener('click', () => {
+        deleteHistoryItemById(item.id);
+    });
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(deleteBtn);
+    historyItem.appendChild(actions);
+
+    return historyItem;
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        return navigator.clipboard.writeText(text);
+    }
+    // fallback
+    return new Promise((resolve, reject) => {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            ok ? resolve() : reject();
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+function showCopyToast(btnEl, message) {
+    const actions = btnEl.closest('.history-actions');
+    if (!actions) return;
+
+    // 기존 토스트 있으면 제거
+    const old = actions.querySelector('.copy-toast');
+    if (old) old.remove();
+
+    const toast = document.createElement('span');
+    toast.className = 'copy-toast';
+    toast.textContent = message;
+    // 복사 버튼 바로 뒤에 붙이기
+    btnEl.insertAdjacentElement('afterend', toast);
+
+    setTimeout(() => {
+        if (toast && toast.parentNode) toast.remove();
+    }, 1200); // 1~1.5초 느낌으로 1.2초 적용
+}
+
+function renderHistoryFromStorage() {
+    historyList.innerHTML = '';
+    const historyArr = loadHistoryFromStorage();
+
+    // id(번호) 최대값을 historyCounter로 맞춰두기
+    const maxId = historyArr.reduce((acc, cur) => Math.max(acc, cur.id), 0);
+    historyCounter = maxId;
+
+    // 저장된 것은 "최신이 위"라고 가정하고 그대로 렌더
+    // (저장 구조: 새 기록 prepend 기준으로 배열 0이 최신)
+    historyArr.forEach(item => {
+        const el = renderHistoryItem(item);
+        historyList.appendChild(el);
+    });
+}
+
+function deleteHistoryItemById(id) {
+    const historyArr = loadHistoryFromStorage();
+    const next = historyArr.filter(item => item.id !== id);
+    saveHistoryToStorage(next);
+
+    // DOM에서도 제거
+    const el = historyList.querySelector(`.history-item[data-history-id="${id}"]`);
+    if (el) el.remove();
+}
+
+function clearAllHistory() {
+    localStorage.removeItem(HISTORY_STORAGE_KEY);
+    historyList.innerHTML = '';
+    historyCounter = 0;
+}
+
 // 페이지가 처음 켜질 때 실행
 window.addEventListener('load', () => {
     initPlaceholders();
     updateRoundNumber();
+    initFilterButtons(); // 필터 버튼 생성
+    initKakaoShare();    // 카카오 공유 설정
+
+    // ★ 저장된 기록 불러오기
+    renderHistoryFromStorage();
+
+    // ★ 전체 삭제 버튼
+    const clearBtn = document.getElementById('history-clear-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            const ok = confirm('전체 기록을 삭제할까요?');
+            if (!ok) return;
+            clearAllHistory();
+        });
+    }
+
+    // ★ 지도: 클릭했을 때만 위치 권한 요청 + 지도 로드
+    const mapBox = document.getElementById('map-container-box');
+    let mapInitialized = false;
+
+    if (mapBox) {
+        mapBox.addEventListener('click', () => {
+            if (mapInitialized) return;
+            mapInitialized = true;
+            initMap();
+        });
+    }
 });
 
-// 3. 번호 생성 로직 (버튼 클릭 이벤트)
+// 3. 번호 생성 로직 (버튼 클릭 이벤트 - 필터 적용 수정)
 
 generateBtn.addEventListener('click', () => {
     if (isGenerating) return; // 이미 생성 중이면 클릭 방지
@@ -87,13 +443,26 @@ generateBtn.addEventListener('click', () => {
     generateBtn.disabled = true; // 버튼 비활성화
     immediateBtn.classList.remove('hidden'); // '즉시 생성' 버튼 등장
 
-    // 1~45 사이의 중복 없는 랜덤 번호 6개 뽑기
-    const numbers = new Set();
-    while (numbers.size < 6) {
+    // ★ 필터 적용 로직
+    // 1. 포함할 번호를 먼저 배열에 넣음
+    const finalNumbersSet = new Set([...includeSet]);
+    
+    // 2. 나머지 번호를 채움 (제외 번호 빼고)
+    while (finalNumbersSet.size < 6) {
         const randomNumber = Math.floor(Math.random() * 45) + 1;
-        numbers.add(randomNumber);
+        // 제외 목록에 없고, 이미 뽑은 번호가 아니면 추가
+        if (!excludeSet.has(randomNumber) && !finalNumbersSet.has(randomNumber)) {
+            finalNumbersSet.add(randomNumber);
+        }
     }
-    currentNumbers = Array.from(numbers); // 원본(화면 표시용)
+    
+    currentNumbers = Array.from(finalNumbersSet); // 원본(화면 표시용 - 순서는 섞여있을 수 있음)
+    
+    // 애니메이션을 위해 섞어서 보여줄지, 정렬해서 보여줄지 결정.
+    // 로또 추첨처럼 '뽑히는 순서'는 랜덤하게 보여주고, 결과는 정렬.
+    // 다만 사용자가 '포함'한 번호가 맨 앞에만 나오면 재미없으므로 currentNumbers를 셔플(Shuffle)
+    currentNumbers.sort(() => Math.random() - 0.5);
+
     sortedNumbersCache = [...currentNumbers].sort((a, b) => a - b); // 정렬(최종 결과용)
 
     // 공이 하나씩 순차적으로 나타나게 함 (1초 간격)
@@ -203,6 +572,9 @@ function rollAndDisplayNumber(ballElement, finalNumber, index) {
 function addHistory(numbers) {
     if (numbers.length === 0) return;
 
+    // ★ 저장된 기록 불러오기
+    const historyArr = loadHistoryFromStorage();
+
     const historyItem = document.createElement('div');
     historyItem.classList.add('history-item');
 
@@ -213,6 +585,7 @@ function addHistory(numbers) {
     historyItem.prepend(historyNumberPrefix);
 
     const numbersDiv = document.createElement('div');
+    historyDiv = document.createElement('div'); // 수정: 변수명 오류 방지용 (혹시 모를 오류 대비)
     numbersDiv.classList.add('history-numbers');
 
     numbers.forEach(number => {
@@ -224,7 +597,59 @@ function addHistory(numbers) {
     });
 
     historyItem.appendChild(numbersDiv);
+
+    // ★ 액션 버튼 영역 (복사 / 삭제)
+    const actions = document.createElement('div');
+    actions.classList.add('history-actions');
+
+    const copyBtn = document.createElement('button');
+    copyBtn.classList.add('history-action-btn');
+    copyBtn.type = 'button';
+    copyBtn.textContent = '📋';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('history-action-btn');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '❌';
+
+    // 새 기록의 id는 historyCounter로 사용
+    const newItem = { id: historyCounter, numbers: numbers };
+
+    copyBtn.addEventListener('click', () => {
+        const text = newItem.numbers.join(', ');
+        copyToClipboard(text).then(() => {
+            showCopyToast(copyBtn, '복사됨');
+        }).catch(() => {
+            showCopyToast(copyBtn, '복사 실패');
+        });
+    });
+
+    deleteBtn.addEventListener('click', () => {
+        deleteHistoryItemById(newItem.id);
+    });
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(deleteBtn);
+    historyItem.appendChild(actions);
+
+    // dataset 연결
+    historyItem.dataset.historyId = String(newItem.id);
+
     historyList.prepend(historyItem); // 최신 기록이 위로 오도록 prepend 사용
+
+    // ★ 저장 배열에도 최신을 맨 앞에 저장
+    historyArr.unshift(newItem);
+
+    // ★ 최대 30개 제한: 초과 시 오래된 것(뒤쪽)부터 삭제
+    if (historyArr.length > HISTORY_MAX) {
+        historyArr.splice(HISTORY_MAX);
+        // DOM에서도 30개 넘어간 마지막 요소들 제거 (방어)
+        while (historyList.children.length > HISTORY_MAX) {
+            historyList.removeChild(historyList.lastChild);
+        }
+    }
+
+    saveHistoryToStorage(historyArr);
 
     // 추가된 부분: 기록이 추가될 때마다 기록 상자의 스크롤을 맨 위로 이동 (최신 기록 확인용)
     const container = document.getElementById('history-container');
