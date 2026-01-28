@@ -299,7 +299,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     margin-bottom: 50px;
 }
 
-.guide-title { text-align: center; margin-bottom: 20px; color: #333; font-size: 22px; }
+.guide-title { text-align: center; margin-top: 0; margin-bottom: 15px; color: #333; font-size: 22px; }
 .guide-list { 
     text-align: left; 
     list-style-type: disc; 
@@ -309,7 +309,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 }
 .guide-list li { margin-bottom: 8px; }
 
-.prize-title { text-align: center; margin-top: 30px; margin-bottom: 20px; color: #333; font-size: 22px; }
+.prize-title { text-align: center; margin-top: 30px; margin-bottom: 15px; color: #333; font-size: 22px; }
 
 /* 표 가로스크롤 방지 및 비율 최적화 */
 .table-responsive { width: 100%; overflow-x: hidden; }
