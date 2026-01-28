@@ -44,7 +44,8 @@ button { background-color: #4CAF50; color: white; padding: 12px 24px; border: no
 button:hover { background-color: #45a049; }
 button:disabled { background-color: #ccc; cursor: not-allowed; }
 #immediate-generate { background-color: #f44336; }
-#immediate-generate:hover { background-color: #d32f2f; }
+/* hover가 존재하는 모든 환경에서 즉시생성 버튼은 진해져라 : 모바일 오류 */
+/* #immediate-generate:hover { background-color: #d32f2f; } */
 .hidden { display: none; }
 
 /* 카카오톡 공유 버튼 스타일 */
@@ -401,5 +402,12 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   .filter-note{
     font-size: 14px;
     margin: 0 0 0;
+  }
+}
+
+/* PC에서만 즉시생성 hover 효과 */
+@media (hover: hover) and (pointer: fine) {
+  #immediate-generate:hover {
+    background-color: #d32f2f;
   }
 }
