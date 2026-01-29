@@ -74,7 +74,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 18px;
+    font-size: 20px;
     padding-top: 1.5px;
 
     /* ✅ placeholder(테두리 포함)든 숫자공(무테)든 겉크기 일관 */
@@ -194,7 +194,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     justify-content: center; 
     align-items: center; 
     color: white; 
-    font-size: 12px; 
+    font-size: 13px; 
     font-weight: bold; 
     padding-top: 1.5px;
 }
