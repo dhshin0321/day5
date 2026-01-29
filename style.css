@@ -75,7 +75,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     align-items: center;
     color: white;
     font-size: 18px;
-    line-height: 1; /* ✅ 모바일에서 숫자가 위로 뜨는 현상 보정(웹/모바일 공통) */
+    transform: translateY(1px);
 
     /* ✅ placeholder(테두리 포함)든 숫자공(무테)든 겉크기 일관 */
     box-sizing: border-box;
@@ -196,7 +196,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     color: white; 
     font-size: 12px; 
     font-weight: bold; 
-    line-height: 1; /* ✅ 모바일에서 숫자가 위로 뜨는 현상 보정(웹/모바일 공통) */
+    transform: translateY(1px);
 }
 
 /* ★ 기록 액션 버튼 */
