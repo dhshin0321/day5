@@ -442,7 +442,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 
     /* ✅ 모바일에서 기록 공 숫자 위치 보정 */
     .history-ball {
-        padding-top: 1.5px;
+        padding-top: 2px;
     }
 }
 
