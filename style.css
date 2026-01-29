@@ -75,7 +75,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     align-items: center;
     color: white;
     font-size: 20px;
-    padding-top: 1.5px;
 
     /* ✅ placeholder(테두리 포함)든 숫자공(무테)든 겉크기 일관 */
     box-sizing: border-box;
@@ -196,7 +195,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     color: white; 
     font-size: 13px; 
     font-weight: bold; 
-    padding-top: 1.5px;
+    box-sizing: border-box;
 }
 
 /* ★ 기록 액션 버튼 */
@@ -385,32 +384,39 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         align-items: center;
         width: 100%;
     }
+
     .container {
         width: 100%;
         min-height: auto;
     }
+
     .sidebar {
         width: 100%;
         /* 모바일에서는 사이드바가 컨테이너 아래로 떨어지므로 자연스럽게 '기록 -> 지도' 순서가 됨 */
     }
+
     #history-container {
         width: 100%;
         margin-top: 0;
         max-height: 340px; 
         min-height: 340px;
     }
+
     .prize-table {
         font-size: 10px;
     }
+
     .prize-table td {
         padding: 8px 2px;
     }
+
     /* ★ 모바일 당첨확률(4번째 칸) 오른쪽 정렬 미세 조정 */
     .prize-table td:nth-child(4) {
         text-align: right;
         padding-right: 2px; /* 모바일은 화면이 좁으니 여백을 5px로 줄임 */
         white-space: nowrap; /* ✅ 모바일에서도 줄바꿈 방지 */
     }
+
     /* 필터 버튼 모바일 최적화 */
     .filter-btn {
         width: 11%; /* 한 줄에 9개 정도 들어가도록 */
@@ -431,52 +437,58 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         width: clamp(38px, 10.8vw, 44px);
         height: clamp(38px, 10.8vw, 44px);
         font-size: 18px;
+        padding-top: 2px; /* ✅ 모바일에서 숫자 위치 보정 */
+    }
+
+    /* ✅ 모바일에서 기록 공 숫자 위치 보정 */
+    .history-ball {
+        padding-top: 1.5px;
     }
 }
 
 /* (추가) 번호 필터 설정 위 안내 문구 */
 .filter-note{
-  margin: 0 0 0;
-  text-align: left;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #666;
+    margin: 0 0 0;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #666;
 }
 
 /* 모바일에서 너무 크거나 답답해 보이면 살짝 조절 */
 @media (max-width: 480px){
-  .filter-note{
-    font-size: 14px;
-    margin: 0 0 0;
-  }
+    .filter-note{
+        font-size: 14px;
+        margin: 0 0 0;
+    }
 }
 
 /* PC에서만 즉시생성 hover 효과 */
 @media (hover: hover) and (pointer: fine) {
-  #immediate-generate:hover {
-    background-color: #d32f2f;
-  }
+    #immediate-generate:hover {
+        background-color: #d32f2f;
+    }
 }
 
 /* footer 링크 (보조) */
 footer a,
 footer a:visited,
 footer a:hover {
-  color: #6B7280;
-  text-decoration: none;
+    color: #6B7280;
+    text-decoration: none;
 }
 
 /* footer 링크 - 화면 비율에 따라 자동 조절 */
 footer a {
-  font-size: clamp(12px, 3.5vw, 14px);
+    font-size: clamp(12px, 3.5vw, 14px);
 }
 
 /* 페이지 하단 '메인으로' 링크만 (p 안의 링크만) */
 .container p a,
 .container p a:visited,
 .container p a:hover {
-  color: #4B5563;
-  text-decoration: underline;
+    color: #4B5563;
+    text-decoration: underline;
 }
 
 /* Contact 이메일 - 항상 텍스트처럼 */
@@ -484,7 +496,7 @@ footer a {
 .container a[href^="mailto"]:visited,
 .container a[href^="mailto"]:hover,
 .container a[href^="mailto"]:active {
-  color: #111;
-  text-decoration: none;
-  cursor: text;
+    color: #111;
+    text-decoration: none;
+    cursor: text;
 }
