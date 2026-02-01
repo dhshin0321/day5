@@ -11,6 +11,63 @@ body {
     box-sizing: border-box;
 }
 
+/* ✅ 상단 헤더 (신설) */
+.site-header{
+    width: 100%;
+    max-width: none; /* ✅ (수정) wrapper 안에서 좌측 폭(flex:1)에 맞추기 위해 해제 */
+    box-sizing: border-box;
+    margin: 0; /* ✅ (수정) 헤더-생성기 사이 여백 0 */
+    flex: 1; /* ✅ (수정) 좌측 container와 같은 폭 */
+}
+
+.site-header-inner{
+    background: #ffffff;
+    border-radius: 12px 12px 0 0; /* ✅ (수정) 헤더 하단 라운드 0 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ✅ (수정) 생성기와 동일 그림자 */
+    padding: 12px 14px;
+
+    border-bottom: 1px solid #eeeeee; /* ✅ (추가) 헤더 하단 구분선 */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 줄바꿈 방지 + 모바일 폰트 자동 축소 */
+.brand{
+    font-weight: 800;
+    color: #111;
+    text-decoration: none;
+
+    white-space: nowrap;           /* ✅ 절대 줄바꿈 금지 */
+    overflow: hidden;
+
+    font-size: clamp(16px, 4.6vw, 20px);
+    letter-spacing: -0.2px;
+}
+
+/* 이용안내 링크 (버튼보다 “링크+필”이 더 자연스러움) */
+.header-link{
+    white-space: nowrap;           /* ✅ 절대 줄바꿈 금지 */
+    text-decoration: none;
+    color: #111;
+    font-weight: 800;
+
+    font-size: clamp(13px, 3.6vw, 16px);
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.header-link:hover{
+    background: #eef2ff;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+    transform: translateY(-1px);
+}
+
 .wrapper {
     display: flex;
     gap: 20px;
@@ -19,14 +76,20 @@ body {
     max-width: 790px;
 }
 
+/* ✅ (추가) 헤더를 wrapper 한 줄로 올렸을 때, 우측(기록/지도) 폭만큼 비워주는 스페이서 */
+.sidebar-spacer{
+    width: 300px;
+    flex-shrink: 0;
+}
+
 /* 2. 번호 생성기 컨테이너 (왼쪽) */
 .container {
     background-color: white;
     padding: 20px 20px;
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px; /* ✅ (수정) 생성기 상단 라운드 0 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    flex: 1; /* 남은 공간 모두 차지 */
+    flex: 1;
     min-height: 282px;
     box-sizing: border-box;
 }
@@ -41,19 +104,15 @@ h1 .title-date { font-size: 14px; color: #888; font-weight: normal; display: blo
 /* 3. 버튼 스타일 */
 .button-group { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; margin-top: 25px; }
 button { background-color: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: all 0.3s; font-weight: bold; }
-/* button:hover { background-color: #45a049; } */
 button:disabled { background-color: #ccc; cursor: not-allowed; }
 #immediate-generate { background-color: #f44336; }
-/* hover가 존재하는 모든 환경에서 즉시생성 버튼은 진해져라 : 모바일 오류 */
-/* #immediate-generate:hover { background-color: #d32f2f; } */
 .hidden { display: none; }
 
 /* 카카오톡 공유 버튼 스타일 */
 .share-section { margin-bottom: 30px; }
 .kakao-btn { background-color: #FEE500; color: #000000; width: 100%; max-width: 260px; font-size: 16px; display: inline-block; }
-/* .kakao-btn:hover { background-color: #E6CF00; } */
 
-/* 4. 결과 공(Ball) 스타일 (위치 변경됨) */
+/* 4. 결과 공(Ball) 스타일 */
 #result {
     margin-top: 10px;
     font-size: 24px;
@@ -75,10 +134,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     align-items: center;
     color: white;
     font-size: 20px;
-
-    /* ✅ placeholder(테두리 포함)든 숫자공(무테)든 겉크기 일관 */
     box-sizing: border-box;
-
     flex-shrink: 0;
 }
 .ball.placeholder { background-color: transparent; border: 2px solid #e0e0e0; color: transparent; }
@@ -115,7 +171,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     flex-shrink: 0;
 }
 
-/* ★ 기록 헤더/전체삭제 버튼 */
+/* 기록 헤더/전체삭제 버튼 */
 .history-header {
     position: relative;
     display: flex;
@@ -171,7 +227,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     box-sizing: border-box;
     gap: 8px;
 
-    /* ★ 웹: 액션 버튼(📋❌) 공간 확보해서 가로 스크롤 방지 */
     position: relative;
     padding-right: 70px;
 }
@@ -179,9 +234,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .history-number-prefix { font-weight: bold; margin-right: 0px; color: #555; flex-shrink: 0; width: 16px; }
 .history-numbers { 
     display: flex; 
-    gap: 4px; 
-
-    /* ★ 웹: flex 넘침으로 생기는 스크롤 방지 */
+    gap: 4px;
     min-width: 0;
     overflow: hidden;
 }
@@ -198,7 +251,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     box-sizing: border-box;
 }
 
-/* ★ 기록 액션 버튼 */
+/* 기록 액션 버튼 */
 .history-actions {
     margin-left: auto;
     display: flex;
@@ -206,7 +259,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     gap: 8px;
     flex-shrink: 0;
 
-    /* ★ 웹: 버튼을 오른쪽에 고정 */
     position: absolute;
     right: 0;
     top: 50%;
@@ -216,7 +268,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 
 .history-action-btn {
     background: #f3f3f3;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #e5e7eb;
     color: #333;
     width: 28px;
     height: 28px;
@@ -248,12 +300,9 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     width: 100%;
     box-sizing: border-box;
     text-align: center;
-
-    /* ★ 추가: 배너를 지도 위에 겹쳐 띄우기 위한 기준 */
     position: relative;
 }
 
-/* ★ 추가: 위치 권한 영구 차단 안내 배너(지도 위, 최상단) */
 .map-permission-banner {
     position: absolute;
     top: 10px;
@@ -274,10 +323,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 }
 
 #map-container-box h2 { font-size: 18px; margin-top: 0; margin-bottom: 10px; color: #333; }
-
-/* ★ 수정: 배너와 지도의 겹침이 자연스럽게 보이도록 overflow 처리 */
 #map { width: 100%; height: 250px; border-radius: 8px; background-color: #eee; overflow: hidden; }
-
 .map-info { font-size: 12px; color: #888; margin-top: 8px; margin-bottom: 0; text-align: left; }
 
 /* 5-2. 필터 스타일 */
@@ -294,7 +340,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     gap: 5px; 
 }
 
-/* 숫자 버튼 (필터용) */
 .filter-btn { 
     width: 39px; 
     height: 39px; 
@@ -308,20 +353,13 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     justify-content: center; 
     align-items: center; 
     cursor: pointer;
-    font-weight: normal; /* 상단 생성 버튼과 구분 */
+    font-weight: normal;
 }
 .filter-btn:hover { background-color: #f9f9f9; }
-
-/* 포함(초록) 활성화 상태 */
 .filter-btn.included { background-color: #4CAF50 !important; color: white; border-color: #4CAF50; font-weight: bold; }
-/* 제외(빨강) 활성화 상태 */
 .filter-btn.excluded { background-color: #f44336 !important; color: white; border-color: #f44336; font-weight: bold; }
 
-/* 1~9, 10~18... 줄바꿈을 위한 보조 클래스 (JS에서 처리하거나 flex-wrap으로 자동 처리) */
-/* 790px 너비 기준에서는 flex-wrap으로 자연스럽게 떨어지게 함 */
-
-
-/* 6. 설명 컨테이너 */
+/* 6. 설명/콘텐츠 컨테이너 */
 #explanation-container { 
     background-color: white; 
     padding: 30px 20px; 
@@ -337,17 +375,104 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 
 .guide-title { text-align: center; margin-top: 0; margin-bottom: 15px; color: #333; font-size: 22px; }
 .guide-list { 
+    max-width: 680px;          /* 📘 intro와 동일한 폭 제한 */
+    margin: 0 auto 26px auto;  /* 가운데 배치 */
     text-align: left; 
     list-style-type: disc; 
     padding-left: 20px; 
-    margin-bottom: 30px; 
+    margin-bottom: 26px; 
     line-height: 1.6;
+    font-size: 16px; /* ✅ A) 본문 글자 크기 16px로 명시 */
 }
 .guide-list li { margin-bottom: 8px; }
 
+/* ✅ 신설 섹션 스타일 */
+.deep-guide{
+    border-top: 1px solid #eee;
+    padding-top: 22px;
+    margin-top: 10px;
+    margin-bottom: 26px;
+}
+
+.deep-guide-title{
+    text-align: center;
+    margin: 0 0 12px 0;
+    color: #111;
+    font-size: 20px;
+}
+
+.deep-guide-intro{
+    margin: 0 auto 16px auto;
+    max-width: 680px;
+    line-height: 1.65;
+    color: #555;
+    font-size: 16px; /* ✅ B) 웹/모바일 모두 16px로 통일 */
+    text-align: left;
+}
+
+/* ✅ 카드형 링크: CSS Grid (요청 스펙 준수) */
+.deep-guide-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.guide-card{
+    display: block;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 14px;
+
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.guide-card:hover{
+    background: #f9fafb;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+}
+
+.guide-card-top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.guide-card-title{
+    margin: 0;
+    font-size: 16px;
+    color: #111;
+    font-weight: 800;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.2;
+}
+
+.guide-card-icon{
+    display: inline-block;
+    line-height: 1;
+}
+
+.guide-card-text{
+    display: inline-block;
+    transform: translateY(1px);
+}
+
+.guide-card-desc{
+    margin: 0;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* ✅ 당첨구조 표 */
 .prize-title { text-align: center; margin-top: 30px; margin-bottom: 15px; color: #333; font-size: 22px; }
 
-/* 표 가로스크롤 방지 및 비율 최적화 */
 .table-responsive { width: 100%; overflow-x: hidden; }
 .prize-table { 
     width: 100%; 
@@ -358,14 +483,12 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .prize-table th { background-color: #e94e6b; color: white; padding: 10px 5px; border: 1px solid #ddd; text-align: center; }
 .prize-table td { padding: 10px 5px; border: 1px solid #ddd; text-align: center; color: #333; word-break: keep-all; }
 
-/* ★ 웹(기본) 당첨확률(4번째 칸) 오른쪽 정렬 */
 .prize-table td:nth-child(4) { 
     text-align: right; 
-    padding-right: 10px; /* 오른쪽 벽에서 10px 띄움 */
-    white-space: nowrap; /* ✅ 당첨확률 줄바꿈 방지 */
+    padding-right: 10px;
+    white-space: nowrap;
 }
 
-/* 표 열 너비 고정 */
 .prize-table th:nth-child(1), .prize-table td:nth-child(1) { width: 12%; }
 .prize-table th:nth-child(2), .prize-table td:nth-child(2) { width: 33%; }
 .prize-table th:nth-child(3), .prize-table td:nth-child(3) { width: 35%; }
@@ -377,7 +500,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .dot.bonus-plus { border: none; color: #666; font-size: 10px; width: auto; line-height: 8px; }
 
 /* 7. 모바일 반응형 설정 */
-/* 앱 사용자를 위한 레이아웃: 생성기 -> 기록 -> 지도 순으로 배치 */
 @media (max-width: 768px) {
     .wrapper {
         flex-direction: column;
@@ -385,14 +507,28 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         width: 100%;
     }
 
+    .sidebar-spacer{
+        display: none; /* ✅ (추가) 모바일에서는 스페이서 제거 */
+    }
+
+    .site-header{
+        width: 100%; /* ✅ (추가) 모바일: 헤더는 화면 폭 꽉 */
+        flex: none;  /* ✅ (추가) wrapper가 column이므로 flex 해제 */
+    }
+
     .container {
         width: 100%;
         min-height: auto;
+        border-radius: 0 0 10px 10px; /* ✅ (수정) 모바일도 맞닿는 상단은 0 */
+    }
+
+    .site-header-inner{
+        border-radius: 12px 12px 0 0; /* ✅ (수정) 모바일도 맞닿는 하단은 0 */
+        border-bottom: 1px solid #eeeeee; /* ✅ (추가) 모바일에서도 구분선 유지 */
     }
 
     .sidebar {
         width: 100%;
-        /* 모바일에서는 사이드바가 컨테이너 아래로 떨어지므로 자연스럽게 '기록 -> 지도' 순서가 됨 */
     }
 
     #history-container {
@@ -410,20 +546,17 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         padding: 8px 2px;
     }
 
-    /* ★ 모바일 당첨확률(4번째 칸) 오른쪽 정렬 미세 조정 */
     .prize-table td:nth-child(4) {
         text-align: right;
-        padding-right: 2px; /* 모바일은 화면이 좁으니 여백을 5px로 줄임 */
-        white-space: nowrap; /* ✅ 모바일에서도 줄바꿈 방지 */
+        padding-right: 2px;
+        white-space: nowrap;
     }
 
-    /* 필터 버튼 모바일 최적화 */
     .filter-btn {
-        width: 11%; /* 한 줄에 9개 정도 들어가도록 */
+        width: 11%;
         height: 36px;
     }
 
-    /* ★ 추가: 모바일에서 배너 여백/폰트 살짝 축소 */
     .map-permission-banner {
         top: 8px;
         left: 8px;
@@ -432,17 +565,20 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         font-size: 11px;
     }
 
-    /* ✅ 너무 좁은 기기에서는 44px 고정이 임계점을 넘을 수 있어, 약간 유동으로(최대 44 유지) */
     .ball {
         width: clamp(38px, 10.8vw, 44px);
         height: clamp(38px, 10.8vw, 44px);
         font-size: 18px;
-        padding-top: 2px; /* ✅ 모바일에서 숫자 위치 보정 */
+        padding-top: 2px;
     }
 
-    /* ✅ 모바일에서 기록 공 숫자 위치 보정 */
     .history-ball {
         padding-top: 2px;
+    }
+
+    /* 모바일에서 신설 섹션 글자/간격 살짝 최적화 */
+    .deep-guide-intro{
+        font-size: 16px; /* ✅ B) 모바일에서도 16px 유지 (덮어쓰기) */
     }
 }
 
@@ -455,7 +591,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     color: #666;
 }
 
-/* 모바일에서 너무 크거나 답답해 보이면 살짝 조절 */
 @media (max-width: 480px){
     .filter-note{
         font-size: 14px;
@@ -463,7 +598,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     }
 }
 
-/* PC에서만 즉시생성 hover 효과 */
+/* PC에서만 hover 효과 */
 @media (hover: hover) and (pointer: fine) {
   button:hover {
     background-color: #45a049;
@@ -484,14 +619,14 @@ footer a:hover {
     text-decoration: none;
 }
 
-/* footer 링크 - 화면 비율에 따라 자동 조절 */
 footer a {
     font-size: clamp(12px, 3.5vw, 14px);
 }
 
-/* ✅ 푸터 전체: 줄바꿈 금지 (1줄/2줄 모두 동일 적용) */
+/* ✅ 푸터 전체: 줄바꿈 금지 */
 footer {
     white-space: nowrap;
+    overflow: hidden;
 }
 
 /* 페이지 하단 '메인으로' 링크만 (p 안의 링크만) */
