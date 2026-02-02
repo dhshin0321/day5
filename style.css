@@ -11,22 +11,22 @@ body {
     box-sizing: border-box;
 }
 
-/* ✅ 상단 헤더 (신설) */
+/* 상단 헤더 (신설) */
 .site-header{
     width: 100%;
-    max-width: none; /* ✅ (수정) wrapper 안에서 좌측 폭(flex:1)에 맞추기 위해 해제 */
+    max-width: none; /* wrapper 안에서 좌측 폭(flex:1)에 맞추기 위해 해제 */
     box-sizing: border-box;
-    margin: 0; /* ✅ (수정) 헤더-생성기 사이 여백 0 */
-    flex: 1; /* ✅ (수정) 좌측 container와 같은 폭 */
+    margin: 0; /* 헤더-생성기 사이 여백 0 */
+    flex: 1; /* 좌측 container와 같은 폭 */
 }
 
 .site-header-inner{
     background: #ffffff;
-    border-radius: 12px 12px 0 0; /* ✅ (수정) 헤더 하단 라운드 0 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ✅ (수정) 생성기와 동일 그림자 */
+    border-radius: 12px 12px 0 0; /* 헤더 하단 라운드 0 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 생성기와 동일 그림자 */
     padding: 12px 14px;
 
-    border-bottom: 1px solid #eeeeee; /* ✅ (추가) 헤더 하단 구분선 */
+    border-bottom: 1px solid #eeeeee; /* 헤더 하단 구분선 */
 
     display: flex;
     justify-content: space-between;
@@ -40,21 +40,24 @@ body {
     color: #111;
     text-decoration: none;
 
-    white-space: nowrap;           /* ✅ 절대 줄바꿈 금지 */
+    white-space: nowrap;           /* 절대 줄바꿈 금지 */
     overflow: hidden;
 
-    font-size: clamp(16px, 4.6vw, 20px);
+    font-size: clamp(18px, 4.6vw, 21px);
     letter-spacing: -0.2px;
+
+    /* ✅ (수정) 헤더 브랜드 폰트만 Pretendard 적용 */
+    font-family: "Pretendard Variable", sans-serif;
 }
 
 /* 이용안내 링크 (버튼보다 “링크+필”이 더 자연스러움) */
 .header-link{
-    white-space: nowrap;           /* ✅ 절대 줄바꿈 금지 */
+    white-space: nowrap;           /* 절대 줄바꿈 금지 */
     text-decoration: none;
     color: #111;
     font-weight: 800;
 
-    font-size: clamp(13px, 3.6vw, 16px);
+    font-size: clamp(13px, 3.6vw, 14px);
     padding: 8px 10px;
     border-radius: 10px;
     background: #f3f4f6;
@@ -76,7 +79,7 @@ body {
     max-width: 790px;
 }
 
-/* ✅ (추가) 헤더를 wrapper 한 줄로 올렸을 때, 우측(기록/지도) 폭만큼 비워주는 스페이서 */
+/* 헤더를 wrapper 한 줄로 올렸을 때, 우측(기록/지도) 폭만큼 비워주는 스페이서 */
 .sidebar-spacer{
     width: 300px;
     flex-shrink: 0;
@@ -86,7 +89,7 @@ body {
 .container {
     background-color: white;
     padding: 20px 20px;
-    border-radius: 0 0 10px 10px; /* ✅ (수정) 생성기 상단 라운드 0 */
+    border-radius: 0 0 10px 10px; /* 생성기 상단 라운드 0 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     flex: 1;
@@ -103,14 +106,38 @@ h1 .title-date { font-size: 14px; color: #888; font-weight: normal; display: blo
 
 /* 3. 버튼 스타일 */
 .button-group { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; margin-top: 25px; }
-button { background-color: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: all 0.3s; font-weight: bold; }
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    /* ✅ (수정) 버튼 radius 통일 */
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
 button:disabled { background-color: #ccc; cursor: not-allowed; }
 #immediate-generate { background-color: #f44336; }
 .hidden { display: none; }
 
 /* 카카오톡 공유 버튼 스타일 */
 .share-section { margin-bottom: 30px; }
-.kakao-btn { background-color: #FEE500; color: #000000; width: 100%; max-width: 260px; font-size: 16px; display: inline-block; }
+
+.kakao-btn {
+    background-color: #FEE500;
+    color: #000000;
+    width: 100%;
+    max-width: 260px;
+    padding: 12px 18px;
+    font-size: 16px;
+    display: inline-block;
+    /* ✅ (수정) 버튼 radius 통일 */
+    border-radius: 10px;
+}
 
 /* 4. 결과 공(Ball) 스타일 */
 #result {
@@ -124,7 +151,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     flex-wrap: wrap;
 }
 
-/* ✅ 숫자공: 테두리 없이 44px / 빈공: (40+2+2)=44px -> "겉크기" 통일 */
+/* 숫자공: 테두리 없이 44px / 빈공: (40+2+2)=44px -> "겉크기" 통일 */
 .ball {
     width: 44px;
     height: 44px;
@@ -136,8 +163,25 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     font-size: 20px;
     box-sizing: border-box;
     flex-shrink: 0;
+
+    /* A안: 플라스틱 공 느낌 – 밝은 하이라이트만 아주 은은하게 */
+    background-image: radial-gradient(
+        circle at 30% 28%,
+        rgba(255,255,255,0.25) 0%,
+        rgba(255,255,255,0.12) 22%,
+        rgba(255,255,255,0.00) 55%
+    );
+
+    /* 바닥에서 살짝 떨어진 느낌만 주는 최소 그림자 */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-.ball.placeholder { background-color: transparent; border: 2px solid #e0e0e0; color: transparent; }
+
+.ball.placeholder {
+    background: none;            /* 빈공: 그라데이션 완전 제거 */
+    border: 2px solid #e0e0e0;
+    color: transparent;
+    box-shadow: none;            /* 빈공: 그림자 제거 */
+}
 
 /* 오른쪽 사이드바 (기록 + 지도) */
 .sidebar {
@@ -189,7 +233,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     color: #333;
     padding: 6px 10px;
     border: none;
-    border-radius: 6px;
+    /* ✅ (수정) 버튼 radius 통일 */
+    border-radius: 10px;
     font-size: 12px;
     cursor: pointer;
     font-weight: bold;
@@ -313,7 +358,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #e0e0e0;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); */
+    box-shadow: none;
 
     padding: 10px 12px;
     text-align: left;
@@ -330,14 +376,41 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .filter-wrapper { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; text-align: left; }
 .filter-wrapper h3 { text-align: center; margin-bottom: 20px; color: #333; font-size: 18px; }
 
-.filter-section { margin-bottom: 25px; }
-.filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: bold; color: #555; }
+.filter-section {
+    margin-bottom: 25px;
+    /* ✅ (추가) 섹션 전체 배경 적용을 위한 여백 */
+    padding: 12px 10px;
+    /* ✅ (추가) 섹션을 카드처럼 정돈 */
+    border-radius: 10px;
+}
+
+/* ✅ (추가) 포함/제외 섹션 전체 배경(A안) */
+.filter-section:first-of-type { background: #f0f7ff; }
+.filter-section:last-of-type { background: #fff5f5; }
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+
+    /* ✅ (추가) 헤더/숫자 구분선 여백 */
+    padding-bottom: 10px;
+    /* ✅ (추가) 헤더/숫자 사이 얇은 라인 */
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
 .count-badge { background: #eee; padding: 2px 8px; border-radius: 10px; font-size: 12px; color: #333; }
 
 .number-grid { 
     display: flex; 
     flex-wrap: wrap; 
     gap: 5px; 
+    /* ✅ (추가) 헤더 라인 아래 간격 */
+    margin-top: 10px;
 }
 
 .filter-btn { 
@@ -356,8 +429,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     font-weight: normal;
 }
 .filter-btn:hover { background-color: #f9f9f9; }
-.filter-btn.included { background-color: #4CAF50 !important; color: white; border-color: #4CAF50; font-weight: bold; }
-.filter-btn.excluded { background-color: #f44336 !important; color: white; border-color: #f44336; font-weight: bold; }
+.filter-btn.included { background-color: #3B82F6 !important; color: white; border-color: #3B82F6; font-weight: bold; }
+.filter-btn.excluded { background-color: #EE5A5A !important; color: white; border-color: #EE5A5A; font-weight: bold; }
 
 /* 6. 설명/콘텐츠 컨테이너 */
 #explanation-container { 
@@ -382,11 +455,11 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     padding-left: 20px; 
     margin-bottom: 26px; 
     line-height: 1.6;
-    font-size: 16px; /* ✅ A) 본문 글자 크기 16px로 명시 */
+    font-size: 16px; /* A) 본문 글자 크기 16px로 명시 */
 }
 .guide-list li { margin-bottom: 8px; }
 
-/* ✅ 신설 섹션 스타일 */
+/* 신설 섹션 스타일 */
 .deep-guide{
     border-top: 1px solid #eee;
     padding-top: 22px;
@@ -406,11 +479,11 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     max-width: 680px;
     line-height: 1.65;
     color: #555;
-    font-size: 16px; /* ✅ B) 웹/모바일 모두 16px로 통일 */
+    font-size: 16px; /* B) 웹/모바일 모두 16px로 통일 */
     text-align: left;
 }
 
-/* ✅ 카드형 링크: CSS Grid (요청 스펙 준수) */
+/* 카드형 링크: CSS Grid (요청 스펙 준수) */
 .deep-guide-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -424,9 +497,30 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 14px 14px;
-
+    /* ✅ (수정) 좌측 컬러 라인 공간 확보 */
+    padding-left: 16px;
+    /* ✅ (추가) 좌측 라인 배치용 */
+    position: relative;
     transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
+
+/* ✅ (추가) 가이드 카드 좌측 얇은 컬러 라인(기본) */
+.guide-card::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 4px;
+    border-radius: 6px;
+    background: #d1d5db;
+}
+
+/* ✅ (추가) 카드별 포인트 컬러(링크 기반) */
+.guide-card[href*="winning-odds"]::before{ background: #93c5fd; }
+.guide-card[href*="number-myths"]::before{ background: #fde68a; }
+.guide-card[href*="guide"]::before{ background: #86efac; }
+.guide-card[href*="lotto-policy"]::before{ background: #c4b5fd; }
 
 .guide-card-top{
     display: flex;
@@ -464,7 +558,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     line-height: 1.45;
 }
 
-/* ✅ 당첨구조 표 */
+/* 당첨구조 표 */
 .prize-title { text-align: center; margin-top: 30px; margin-bottom: 15px; color: #333; font-size: 22px; }
 
 .table-responsive { width: 100%; overflow-x: hidden; }
@@ -502,23 +596,23 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     }
 
     .sidebar-spacer{
-        display: none; /* ✅ (추가) 모바일에서는 스페이서 제거 */
+        display: none; /* 모바일에서는 스페이서 제거 */
     }
 
     .site-header{
-        width: 100%; /* ✅ (추가) 모바일: 헤더는 화면 폭 꽉 */
-        flex: none;  /* ✅ (추가) wrapper가 column이므로 flex 해제 */
+        width: 100%; /* 모바일: 헤더는 화면 폭 꽉 */
+        flex: none;  /* wrapper가 column이므로 flex 해제 */
     }
 
     .container {
         width: 100%;
         min-height: auto;
-        border-radius: 0 0 10px 10px; /* ✅ (수정) 모바일도 맞닿는 상단은 0 */
+        border-radius: 0 0 10px 10px; /* 모바일도 맞닿는 상단은 0 */
     }
 
     .site-header-inner{
-        border-radius: 12px 12px 0 0; /* ✅ (수정) 모바일도 맞닿는 하단은 0 */
-        border-bottom: 1px solid #eeeeee; /* ✅ (추가) 모바일에서도 구분선 유지 */
+        border-radius: 12px 12px 0 0; /* 모바일도 맞닿는 하단은 0 */
+        border-bottom: 1px solid #eeeeee; /* 모바일에서도 구분선 유지 */
     }
 
     .sidebar {
@@ -563,7 +657,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         width: clamp(38px, 10.8vw, 44px);
         height: clamp(38px, 10.8vw, 44px);
         font-size: 18px;
-        padding-top: 2px;
+        padding-top: 0px;
     }
 
     .history-ball {
@@ -572,7 +666,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 
     /* 모바일에서 신설 섹션 글자/간격 살짝 최적화 */
     .deep-guide-intro{
-        font-size: 16px; /* ✅ B) 모바일에서도 16px 유지 (덮어쓰기) */
+        font-size: 16px; /* B) 모바일에서도 16px 유지 (덮어쓰기) */
     }
 }
 
@@ -617,9 +711,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   /* 이모지 4개 카드 */
   .guide-card:hover{
     background: #f9fafb;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-    transform: translateY(-2px);
-  }
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08); /* 한 단계 약화 */
+    transform: translateY(-1px);             /* 과도한 부상 방지 */
 }
 
 /* footer 링크 (보조) */
@@ -634,7 +727,7 @@ footer a {
     font-size: clamp(12px, 3.5vw, 14px);
 }
 
-/* ✅ 푸터 전체: 줄바꿈 금지 */
+/* 푸터 전체: 줄바꿈 금지 */
 footer {
     white-space: nowrap;
     overflow: hidden;
