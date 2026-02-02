@@ -713,6 +713,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     background: #f9fafb;
     box-shadow: 0 6px 14px rgba(0,0,0,0.08); /* 한 단계 약화 */
     transform: translateY(-1px);             /* 과도한 부상 방지 */
+    }
 }
 
 /* footer 링크 (보조) */
@@ -737,7 +738,7 @@ footer {
 .container p a,
 .container p a:visited,
 .container p a:hover {
-    color: #4B5563;
+    color: #4B5563; 
     text-decoration: underline;
 }
 
